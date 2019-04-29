@@ -1,8 +1,8 @@
 'use stict'
 
 class Profile {   // Класс пользователя
-    constructor({userName, name: {firstName, lastName}, password}) {
-        this.userName = userName;
+    constructor({username, name: {firstName, lastName}, password}) {
+        this.username = username;
         this.name = {firstName, lastName};
         this.password = password;
     }
@@ -16,23 +16,23 @@ class Profile {   // Класс пользователя
 
     createUser(callback) {    // Метод добавляющий нового пользователя
         return ApiConnector.createUser({
-            userName: this.userName,
+            username: this.username,
             name: this.name,
             password: this.password,
         },
         (err, data) => {
-            console.log(`Creating user ${this.userName}`);
+            console.log(`Creating user ${this.username}`);
             callback(err, data);
         });
     }
 
-    performLogin(callback) { // Авторизация пользователя
+    authorize(callback) { // Авторизация пользователя
         return ApiConnector.performLogin({
-            userName: this.userName,
+            username: this.username,
             password: this.password,
         },
         (err, data) => {
-            console.log(`Authorizing user ${this.userName}`);
+            console.log(`Authorizing user ${this.username}`);
             callback(err, data);
         });
     }
@@ -54,26 +54,74 @@ class Profile {   // Класс пользователя
         });
     }
 
+    getStocks(callback) { // с помощью этой функции получаем текущий курс между валютами
+        return ApiConnector.getStocks((err, data) => {
+            console.log(`Getting stocks info`);
+            callback(err, data[99]);
+        });
+    }
+
 }
 
 
 // Вторая чать задачи:
 function main() {
+/*
+    getStocks((err, data) => { // получаем текущий курс между валютами
+        if(err) {
+            console.error('Error during getting stocks');
+        } 
+           // const stocksInfo = data;
+    });  */
+
     const Ivan = new Profile({
-                    username: 'ivan',
-                    name: { firstName: 'Ivan', lastName: 'Chernyshev' },
-                    password: 'ivanspass',
-                });
+        username: 'ivan',
+        name: { firstName: 'Ivan', lastName: 'Chernyshev' },
+        password: 'ivanspass',
+        });
+    
+    const Max = new Profile({
+        username: 'max',
+        name: {firstName: 'Maxim', lastName: 'Zarn'},
+        password: 'maxpass',
+    });
     // сначала создаем и авторизуем пользователя
 
+    Ivan.createUser((err, data) => { // Создали пользователя Иван
+        if(err) {
+            console.error(`Error during creating ivan`);
+        } else {
+            console.log(`ivan is created!`);
+        }
+    });
+
+    Max.createUser((err, data) => { //  Создали пользователя Макс
+        if(err) {
+            console.error(`Error during creating max`);
+        } else {
+            console.log(`max is created!`);
+        }
+    });
+
+    Ivan.authorize((err, data) => {
+        if(err) {
+            console.error(`Error during authorizing ivan`);
+        } else {
+            console.log(`ivan is authorized!`);
+        }
+    });
+
     // после того, как мы авторизовали пользователя, добавляем ему денег в кошелек
-    Ivan.addMoney({ currency: 'RUB', amount: 100 }, (err, data) => {
+    Ivan.addMoney({ currency: 'EUR', amount: 500000 }, (err, data) => {
         if (err) {
             console.error('Error during adding money to Ivan');
             } else {
                 console.log(`Added 500000 euros to Ivan`);
         }
     });
+
+
+
 }
 
 main();
