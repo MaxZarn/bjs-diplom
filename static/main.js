@@ -53,48 +53,93 @@ class Profile {   // Класс пользователя
             callback(err, data);
         });
     }
+};
 
-    getStocks(callback) { // с помощью этой функции получаем текущий курс между валютами
-        return ApiConnector.getStocks((err, data) => {
-            console.log(`Getting stocks info`);
-            callback(err, data[99]);
-        });
-    }
+function getStocks(callback) { // с помощью этой функции получаем текущий курс между валютами
+    return ApiConnector.getStocks((err, data) => {
+        console.log(`Getting stocks info`);
+        callback(err, data[data.length - 1]); // возвращает последний элемент массива data
+    });
+};
 
-}
+ //const stocksInfo = getStocks(callback);
+
 
 
 // Вторая чать задачи:
 function main() {
-/*
+
     getStocks((err, data) => { // получаем текущий курс между валютами
         if(err) {
             console.error('Error during getting stocks');
-        } 
-           // const stocksInfo = data;
-    });  */
-
-    const Ivan = new Profile({
-        username: 'ivan',
-        name: { firstName: 'Ivan', lastName: 'Chernyshev' },
-        password: 'ivanspass',
-        });
-    
-    const Max = new Profile({
-        username: 'max',
-        name: {firstName: 'Maxim', lastName: 'Zarn'},
-        password: 'maxpass',
-    });
-    // сначала создаем и авторизуем пользователя
-
-    Ivan.createUser((err, data) => { // Создали пользователя Иван
-        if(err) {
-            console.error(`Error during creating ivan`);
         } else {
-            console.log(`ivan is created!`);
-        }
-    });
+            const stocksInfo = data;
 
+            const Ivan = new Profile({
+                username: 'ivan',
+                name: { firstName: 'Ivan', lastName: 'Chernyshev' },
+                password: 'ivanspass',
+                });
+                
+            const Max = new Profile({
+                username: 'max',
+                name: {firstName: 'Maxim', lastName: 'Zarn'},
+                password: 'maxpass',
+                });   
+
+                Ivan.createUser((err, data) => { // Создали пользователя Иван
+                    if(err) {
+                        console.error(`Error during creating ivan`);
+                    } else {
+                        console.log(`ivan is created!`);
+
+                        Max.createUser((err, data) => { // Создали пользователя Макс
+                            if(err) {
+                                console.error(`Error during creating max`);
+                            } else {
+                                console.log(`max is created!`);
+
+                        Ivan.authorize((err, data) => {
+                          if(err) {
+                             console.error(`Error during authorizing ivan`);
+                          } else {
+                              console.log(`ivan is authorized!`);
+                            
+                         Ivan.addMoney({ currency: 'EUR', amount: 500000 }, (err, data) => {
+                             if (err) {
+                                    console.error('Error during adding money to Ivan');
+                                    } else {
+                                        console.log(`Added 500000 euros to Ivan`);
+                                        const targetAmount = stocksInfo[EUR_NETCOIN] * 500000;
+                                    
+                               // const targetAmount = stocksInfo[EUR_NETCOIN] * 500000;
+                                    
+                                Ivan.convertMoney({fromCurrency: 'EUR', targetCurrency: 'Netcoins', targetAmount}, (err, data) => {
+                                 if(err) {
+                                     console.error('Error during converting money')
+                                 } else {
+                                     console.log(`Converting ${fromCurrency} to ${targetAmount} ${targetCurrency}`);
+                                    
+                                    
+                                   Ivan.transferMoney({to: Max.userName, amount: targetAmount}, (err, data) => {
+                                        if(err) {
+                                           console.error('Error during transfer money');
+                                        } else {
+                                           console.log(`Max has got ${targetAmount} Netcoins`);
+                                       }
+
+                                });
+                            }});
+                        }});
+                     }});
+                    }});
+
+                }});  
+                
+    }});  
+
+    
+/*
     Max.createUser((err, data) => { //  Создали пользователя Макс
         if(err) {
             console.error(`Error during creating max`);
@@ -102,26 +147,7 @@ function main() {
             console.log(`max is created!`);
         }
     });
-
-    Ivan.authorize((err, data) => {
-        if(err) {
-            console.error(`Error during authorizing ivan`);
-        } else {
-            console.log(`ivan is authorized!`);
-        }
-    });
-
-    // после того, как мы авторизовали пользователя, добавляем ему денег в кошелек
-    Ivan.addMoney({ currency: 'EUR', amount: 500000 }, (err, data) => {
-        if (err) {
-            console.error('Error during adding money to Ivan');
-            } else {
-                console.log(`Added 500000 euros to Ivan`);
-        }
-    });
-
-
-
+*/
 }
 
 main();
