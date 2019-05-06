@@ -110,7 +110,7 @@ function main() {
                                     console.error('Error during adding money to Ivan');
                                     } else {
                                         console.log(`Added 500000 euros to Ivan`);
-                                        const targetAmount = stocksInfo[EUR_NETCOIN] * 500000;
+                                        const targetAmount = stocksInfo['EUR_NETCOIN'] * 500000;
                                     
                                // const targetAmount = stocksInfo[EUR_NETCOIN] * 500000;
                                     
