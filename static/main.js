@@ -39,7 +39,7 @@ class Profile {   // Класс пользователя
          // Конвертация валют:
         
     convertMoney({ fromCurrency, targetCurrency, targetAmount }, callback) { // Конвертация валюты
-        return ApiConnector.convertMoney({fromCurrency: 'EUR', targetCurrency: 'Netcoins', targetAmount}, (err, data) => {
+        return ApiConnector.convertMoney({fromCurrency: 'EUR', targetCurrency: 'NETCOIN', targetAmount}, (err, data) => {
             console.log(`Converting ${fromCurrency} to ${targetAmount} ${targetCurrency}`);
             callback(err, data);
         });
@@ -48,7 +48,7 @@ class Profile {   // Класс пользователя
 
 
     transferMoney({to, amount}, callback) { // Перевод токенов другому пользователю
-        return AoiConnector.transferMoney({to, amount}, (err, data) => {
+        return ApiConnector.transferMoney({to, amount}, (err, data) => {
             console.log(`Transfering ${amount} of Netcoins to ${to}`);
             callback(err, data);
         });
@@ -108,46 +108,35 @@ function main() {
                          Ivan.addMoney({ currency: 'EUR', amount: 500000 }, (err, data) => {
                              if (err) {
                                     console.error('Error during adding money to Ivan');
+                                    console.log(err);
                                     } else {
                                         console.log(`Added 500000 euros to Ivan`);
                                         const targetAmount = stocksInfo['EUR_NETCOIN'] * 500000;
                                     
-                               // const targetAmount = stocksInfo[EUR_NETCOIN] * 500000;
-                                    
-                                Ivan.convertMoney({fromCurrency: 'EUR', targetCurrency: 'Netcoins', targetAmount}, (err, data) => {
+                                Ivan.convertMoney({fromCurrency: 'EUR', targetCurrency: 'NETCOIN', targetAmount}, (err, data) => {
                                  if(err) {
-                                     console.error('Error during converting money')
+                                     console.error('Error during converting money');
+                                     console.log(err);
                                  } else {
-                                     console.log(`Converting ${fromCurrency} to ${targetAmount} ${targetCurrency}`);
+                                     console.log(`Converted to coins`, data);
                                     
-                                    
-                                   Ivan.transferMoney({to: Max.userName, amount: targetAmount}, (err, data) => {
+                                   Ivan.transferMoney({to: Max.username, amount: targetAmount,}, (err, data) => {
                                         if(err) {
                                            console.error('Error during transfer money');
+                                           console.log(err);
                                         } else {
-                                           console.log(`Max has got ${targetAmount} Netcoins`);
+                                           console.log(`Max has got ${targetAmount} NETCOINS`);
                                        }
 
-                                });
+                                    });
+                                }});
                             }});
                         }});
-                     }});
                     }});
 
-                }});  
+            }});  
                 
     }});  
-
-    
-/*
-    Max.createUser((err, data) => { //  Создали пользователя Макс
-        if(err) {
-            console.error(`Error during creating max`);
-        } else {
-            console.log(`max is created!`);
-        }
-    });
-*/
 }
 
 main();
